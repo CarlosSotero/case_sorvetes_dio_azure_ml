@@ -21,6 +21,8 @@ A solução permite que a sorveteria Gelato Mágico otimize sua produção, redu
 
 - Compute Cluster (cluster-dio-cpu)
 
+- MLflow Model Registry
+
 ---
 
 ## 🎯 Problema de Negócio
@@ -51,15 +53,15 @@ O experimento foi criado utilizando ML Automatizado no Azure com as seguintes co
 
 - Tipo de tarefa: Regressão
 
-- Métrica primária: Erro quadrático
+- Métrica primária: Erro quadrático médio
 
-- Validação automática
+- Validação cruzada automática
 
 - Execução em Compute Cluster
 
 - Duração aproximada: 28 minutos
 
-O AutoML treinou múltiplos modelos e selecionou automaticamente o melhor com base na métrica definida.
+O AutoML treinou múltiplos algoritmos e realizou tuning automático de hiperparâmetros, selecionando o melhor modelo com base na métrica definida.
 
 ## 🏆 Modelo Campeão e suas métricas
 
@@ -72,9 +74,13 @@ VotingEnsemble
 - RMSE: 2.2381
 - MAE: 1.8855
 
-O VotingEnsemble combina múltiplos modelos de regressão, realizando uma média ponderada das previsões individuais, o que reduz variância e melhora a generalização.
+### 🔎 Interpretação
 
-Modelos comparados:
+O modelo apresentou um R² de 0.9919, indicando que mais de 99% da variabilidade nas vendas é explicada pela temperatura.
+
+O VotingEnsemble combina múltiplos modelos de regressão por meio de média ponderada das previsões individuais, reduzindo variância e aumentando a capacidade de generalização.
+
+### Modelos comparados:
 
 - VotingEnsemble
 
@@ -108,25 +114,39 @@ Modelo registrado:
 
 ## 🚀 Implantação (Deploy)
 
-O modelo pode ser implantado como:
+O modelo foi preparado para implantação como:
 
 - Online Endpoint (tempo real)
 
 - Batch Endpoint (previsões em lote)
 
-O deploy permite que sistemas externos enviem temperatura via API REST e recebam a previsão de vendas.
+### 🔄 Tentativa de Deploy
 
-Exemplo de entrada:
+Foram realizadas tentativas de implantação utilizando:
 
+- Azure Container Instance (ACI)
+
+- Managed Online Endpoint
+
+Entretanto, ocorreram falhas relacionadas a limitações de quota da assinatura gratuita do Azure, impedindo o provisionamento completo do endpoint.
+
+O modelo encontra-se registrado e pronto para implantação em ambiente com recursos adequados.
+
+### 📡 Exemplo de Requisição JSON
+```text
 {
-  "temperatura": 32
+  "input_data": {
+    "columns": ["temperatura"],
+    "data": [[32]]
+  }
 }
-
-Saída esperada:
-
+```
+Resposta esperada:
+```text
 {
   "previsao_vendas": 245
 }
+```
 
 ---
 ## 📊 Pipeline e Reprodutibilidade
@@ -162,7 +182,7 @@ Durante o desenvolvimento deste projeto, foi possível compreender:
 - Processo completo de experimentação, registro e deploy
 
 - Governança de modelos em ambiente cloud
-- 
+  
 ---
 
 ## 🏁 Conclusão
